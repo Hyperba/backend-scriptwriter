@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { Groq } from "groq-sdk";
 import rateLimit from "express-rate-limit";
-import axios from "axios";
 
 dotenv.config();
 

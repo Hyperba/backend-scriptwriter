@@ -20,12 +20,17 @@ const groq = new Groq({ apiKey: GROQ_API_KEY });
 // CORS configuration
 app.use(
 	cors({
-		origin: "https://yt-scriptwriter.netlify.app", // Allow frontend
+		origin: (origin, callback) => {
+			if (origin === "https://yt-scriptwriter.netlify.app" || !origin) {
+				callback(null, true);
+			} else {
+				callback(new Error("Not allowed by CORS"));
+			}
+		},
 		methods: ["GET", "POST", "OPTIONS"],
 		allowedHeaders: ["Content-Type", "x-api-key"],
 	})
 );
-
 // Handle OPTIONS requests (preflight)
 app.options("*", cors()); // Allow preflight across all routes
 

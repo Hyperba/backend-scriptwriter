@@ -20,25 +20,17 @@ const groq = new Groq({ apiKey: GROQ_API_KEY });
 // ✅ Fix CORS
 const allowedOrigins = ["https://yt-scriptwriter.netlify.app", "http://localhost:5173"];
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "x-api-key"]
-}));
-
-// Allow preflight requests
-app.options("*", (req, res) => {
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "https://yt-scriptwriter.netlify.app");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, x-api-key");
+    next();
+});
+
+app.options("*", (req, res) => {
     res.sendStatus(200);
 });
+
 
 // ✅ Ensure JSON is parsed
 app.use(express.json());

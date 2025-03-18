@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { Groq } from "groq-sdk";
 import rateLimit from "express-rate-limit";
 
@@ -18,6 +19,16 @@ const groq = new Groq({ apiKey: GROQ_API_KEY });
 
 app.use(express.json());
 
+// 🔥 Add CORS middleware (ALLOW your frontend)
+app.use(
+    cors({
+        origin: "https://yt-scriptwriter.netlify.app",
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+        credentials: true,
+    })
+);
+
+// Rate limiting
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000, 
     max: 100,

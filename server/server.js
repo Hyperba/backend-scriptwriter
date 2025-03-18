@@ -25,6 +25,7 @@ app.use(
         origin: "https://yt-scriptwriter.netlify.app",
         methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         credentials: true,
+        optionSuccessStatus:200,
     })
 );
 

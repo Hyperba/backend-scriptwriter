@@ -1,6 +1,6 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
 import { Groq } from "groq-sdk";
 import rateLimit from "express-rate-limit";
 
@@ -17,17 +17,33 @@ if (!GROQ_API_KEY) {
 
 const groq = new Groq({ apiKey: GROQ_API_KEY });
 
-app.use(express.json());
+// ✅ Fix CORS
+const allowedOrigins = ["https://yt-scriptwriter.netlify.app", "http://localhost:5173"];
 
-// 🔥 Add CORS middleware (ALLOW your frontend)
-app.use(
-    cors({
-        origin: "https://yt-scriptwriter.netlify.app",
-        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-        credentials: true,
-        optionSuccessStatus:200,
-    })
-);
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "x-api-key"]
+}));
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*"); // ✅ Ensure requests are allowed
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Allow-Headers", "Content-Type, x-api-key");
+    next();
+});
+
+// Allow preflight requests
+app.options("*", cors());
+
+// ✅ Ensure JSON is parsed
+app.use(express.json());
 
 // Rate limiting
 const limiter = rateLimit({

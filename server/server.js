@@ -32,15 +32,13 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "x-api-key"]
 }));
 
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*"); // ✅ Ensure requests are allowed
+// Allow preflight requests
+app.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", "https://yt-scriptwriter.netlify.app");
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     res.header("Access-Control-Allow-Headers", "Content-Type, x-api-key");
-    next();
+    res.sendStatus(200);
 });
-
-// Allow preflight requests
-app.options("*", cors());
 
 // ✅ Ensure JSON is parsed
 app.use(express.json());
